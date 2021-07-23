@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 520345ec41578454f94daedde43abaa7
+  m_SerializeEntries:
+  - m_GUID: 8406ef125d7886c46a21a4192e11919f
+    m_Address: Bread
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 5910341105362435727, guid: 8406ef125d7886c46a21a4192e11919f,
+      type: 3}
+    m_TargetAsset: {fileID: 5910341105362435727, guid: 8406ef125d7886c46a21a4192e11919f,
+      type: 3}
+  - m_GUID: a61dfc89f28e67947a579f8b3a43202f
+    m_Address: Lettuce
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 7032800494946985022, guid: a61dfc89f28e67947a579f8b3a43202f,
+      type: 3}
+    m_TargetAsset: {fileID: 7032800494946985022, guid: a61dfc89f28e67947a579f8b3a43202f,
+      type: 3}
+  - m_GUID: 08e0ee52241ca24409ff0c3c2cf63357
+    m_Address: Egg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 7460383739415233430, guid: 08e0ee52241ca24409ff0c3c2cf63357,
+      type: 3}
+    m_TargetAsset: {fileID: 7460383739415233430, guid: 08e0ee52241ca24409ff0c3c2cf63357,
+      type: 3}
+  - m_GUID: 557b27c497aebdd4385b73cbb28fdad1
+    m_Address: Cheese
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 7227414154865067352, guid: 557b27c497aebdd4385b73cbb28fdad1,
+      type: 3}
+    m_TargetAsset: {fileID: 7227414154865067352, guid: 557b27c497aebdd4385b73cbb28fdad1,
+      type: 3}
+  - m_GUID: e7ba4e40bbc92354ebb1a73d0db1c5f3
+    m_Address: Meat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 3035185287618108187, guid: e7ba4e40bbc92354ebb1a73d0db1c5f3,
+      type: 3}
+    m_TargetAsset: {fileID: 3035185287618108187, guid: e7ba4e40bbc92354ebb1a73d0db1c5f3,
+      type: 3}
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 19a9465277a067942860eccc56d322ef, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 2901dec87b6587b45a1b06ab214b2b7f, type: 2}
+    - {fileID: 11400000, guid: dfdd51c0463dceb4eaf8b731f3c8583b, type: 2}
