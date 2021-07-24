@@ -37,28 +37,27 @@ public class Tile : MonoBehaviour
     public void Undo(Tile target, int itemCount, System.Action onComplete)
     {
         if(itemCount > 1) {
-            for (int i = 1; i < ItemStack.Count - 1; i++)
+            TileItem item = ItemStack[ItemStack.Count - 1];
+
+            for (int i = ItemStack.Count - itemCount; i < ItemStack.Count - 1; i++)
             {
-                ItemStack[i].transform.SetParent(ItemStack[ItemStack.Count - 1].transform);
+                ItemStack[i].transform.SetParent(item.transform);
             }
 
-            TileItem item = ItemStack[ItemStack.Count - 1];
+            item.transform.SetParent(null);
 
             item.Move(new Vector3(target.transform.position.x, 0, target.transform.position.z), () =>
             {
-                if (ItemStack.Count > 1)
+                List<TileItem> items = new List<TileItem>();
+                for (int i = ItemStack.Count - itemCount; i < ItemStack.Count; i++)
                 {
-                    List<TileItem> items = new List<TileItem>();
-                    for (int i = 1; i < ItemStack.Count; i++)
-                    {
-                        items.Add(ItemStack[i]);
-                    }
-                    ItemStack.RemoveRange(1, ItemStack.Count - 1);
-
-                    target.ItemStack.AddRange(items);
-
-                    target.SortItem();
+                    items.Add(ItemStack[i]);
                 }
+                ItemStack.RemoveRange(ItemStack.Count - itemCount, itemCount);
+
+                target.ItemStack.AddRange(items);
+                target.ItemStack.Reverse();
+                target.SortItem();
 
                 onComplete();
             }, true);

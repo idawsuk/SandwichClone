@@ -143,7 +143,7 @@ public class GameManager : MonoBehaviour
         playerInput.enabled = false;
         List<TileItem> items = selectedTile.ItemStack;
 
-        moveHistoryManager.AddMove(selectedTile, targetTile, selectedTile.ItemStack.Count);
+        moveHistoryManager.AddMove(selectedTile, targetTile, items.Count);
 
         selectedTile.SortItem();
 
@@ -198,8 +198,6 @@ public class GameManager : MonoBehaviour
 
         history.CurrentTile.Undo(history.PreviousTile, history.ItemCount, () =>
         {
-            history.PreviousTile.ItemStack.Reverse();
-
             ResetLevel();
         });
     }

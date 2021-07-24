@@ -36,8 +36,10 @@ public class TileItem : MonoBehaviour
         if (isReverse)
             direction = -direction;
 
-        Vector3 rotation = transform.localEulerAngles;
-        transform.DORotate(rotation + (direction * 180), .5f, RotateMode.FastBeyond360);
+        Vector3 targetRotation = transform.localEulerAngles + (direction * 180);
+        if (isReverse)
+            targetRotation = Vector3.zero;
+        transform.DORotate(targetRotation, .5f, RotateMode.FastBeyond360);
         transform.DOJump(target, .5f, 1, .5f).OnComplete(() =>
         {
             onComplete?.Invoke();
