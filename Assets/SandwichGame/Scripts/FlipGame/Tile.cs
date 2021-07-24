@@ -29,6 +29,11 @@ public class Tile : MonoBehaviour
         }
     }
 
+    public void MoveItem(Tile target, System.Action onComplete)
+    {
+        ItemStack[0].Move(new Vector3(target.transform.position.x, (ItemStack.Count - 1 + target.ItemStack.Count) * target.Offset, target.transform.position.z), onComplete);
+    }
+
     private void OnDrawGizmos()
     {
         //Gizmos.DrawCube(this.transform.position, new Vector3(.9f, .2f, .9f));

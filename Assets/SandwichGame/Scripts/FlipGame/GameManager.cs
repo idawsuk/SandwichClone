@@ -105,6 +105,9 @@ public class GameManager : MonoBehaviour
 
     void EndInput(Vector2 direction)
     {
+        if (selectedTile.ItemStack.Count == 0)
+            return;
+
         Vector2Int directionInt = new Vector2Int((int)direction.x, (int)direction.y);
         int gridX = (int)selectedTile.transform.position.x;
         int gridY = (int)selectedTile.transform.position.y;
@@ -121,22 +124,20 @@ public class GameManager : MonoBehaviour
 
     void MoveTile(Tile targetTile)
     {
+        playerInput.enabled = false;
         List<TileItem> items = selectedTile.ItemStack;
 
-        selectedTile.ItemStack.Reverse();
-        //selectedTile.SortItem();
-        //items[0].transform.position = new Vector3(targetTile.transform.position.x, targetTile.Offset * targetTile.ItemStack.Count, targetTile.transform.position.z);
+        //selectedTile.ItemStack.Reverse();
+        selectedTile.SortItem();
 
-        targetTile.ItemStack.AddRange(items);
-        //targetTile.SortItem();
-
-        for (int i = 0; i < targetTile.ItemStack.Count; i++)
+        selectedTile.MoveItem(targetTile, () =>
         {
-            Transform itemTransform = targetTile.ItemStack[i].transform;
+            targetTile.ItemStack.AddRange(items);
+            selectedTile.ItemStack.Clear();
 
-            itemTransform.localPosition = new Vector3(targetTile.Grid.x, i * targetTile.Offset, targetTile.Grid.y);
-        }
+            selectedTile = null;
 
-        selectedTile.ItemStack.Clear();
+            playerInput.enabled = true;
+        });
     }
 }
