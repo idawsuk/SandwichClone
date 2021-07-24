@@ -132,6 +132,7 @@ public class GameManager : MonoBehaviour
 
         selectedTile.MoveItem(targetTile, () =>
         {
+            items.Reverse();
             targetTile.ItemStack.AddRange(items);
             selectedTile.ItemStack.Clear();
 
