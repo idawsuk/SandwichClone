@@ -6,31 +6,49 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class GameManager : MonoBehaviour
 {
+    #region direct reference
     [SerializeField] PlayerInput playerInput;
+    [SerializeField] LevelManager levelManager;
 
     [SerializeField] Tile tilePrefab;
     [SerializeField] LevelData TestLevel;
 
+    [SerializeField] MoveHistoryManager moveHistoryManager;
+    #endregion
+
     const string BREAD_ITEM = "Bread";
 
+    #region private variables
     AsyncOperationHandle<GameObject> loadObjectHandler;
     Tile[,] grid;
     Tile selectedTile;
+
+    int itemCount;
+
+    int currentLevel;
+    #endregion
 
     // Start is called before the first frame update
     void Start()
     {
         LevelData data = GetLevelData();
-        CreateGrid(data);
-        StartCoroutine(LoadObjects(data));
 
-        playerInput.OnTouchBegin += StartInput;
-        playerInput.OnTouchEnd += EndInput;
+        if(data != null)
+        {
+            CreateGrid(data);
+            StartCoroutine(LoadObjects(data));
+
+            itemCount = data.LevelItems.Count;
+
+            playerInput.OnTouchBegin += StartInput;
+            playerInput.OnTouchEnd += EndInput;
+        }
     }
 
     LevelData GetLevelData()
     {
-        return TestLevel;
+        currentLevel = PlayerPrefs.GetInt("currentLevel", 0);
+        return levelManager.GetCurrentLevel(currentLevel);
     }
 
     // Update is called once per frame
@@ -109,25 +127,24 @@ public class GameManager : MonoBehaviour
             return;
 
         Vector2Int directionInt = new Vector2Int((int)direction.x, (int)direction.y);
-        int gridX = (int)selectedTile.transform.position.x;
-        int gridY = (int)selectedTile.transform.position.y;
 
         Vector2Int targetGrid = selectedTile.Grid + directionInt;
-        if (targetGrid.x < 0 || targetGrid.y < 0) // out of bounds
+        if (targetGrid.x < 0 || targetGrid.y < 0 || targetGrid.x > grid.GetLength(0) - 1 || targetGrid.y > grid.GetLength(1) - 1) // out of bounds
             return;
 
         if (grid[targetGrid.x, targetGrid.y].ItemStack.Count == 0) // empty tile
             return;
 
-        MoveTile(grid[targetGrid.x, targetGrid.y]);
+        MoveItems(grid[targetGrid.x, targetGrid.y]);
     }
 
-    void MoveTile(Tile targetTile)
+    void MoveItems(Tile targetTile)
     {
         playerInput.enabled = false;
         List<TileItem> items = selectedTile.ItemStack;
 
-        //selectedTile.ItemStack.Reverse();
+        moveHistoryManager.AddMove(selectedTile, targetTile, selectedTile.ItemStack.Count);
+
         selectedTile.SortItem();
 
         selectedTile.MoveItem(targetTile, () =>
@@ -139,6 +156,57 @@ public class GameManager : MonoBehaviour
             selectedTile = null;
 
             playerInput.enabled = true;
+
+            if(IsCompleted(targetTile))
+            {
+                LoadNextLevel();
+            }
         });
+    }
+
+    bool IsCompleted(Tile tile)
+    {
+        if(tile.ItemStack.Count == itemCount)
+        {
+            if (tile.ItemStack[0].Item.Name.Equals(BREAD_ITEM) && tile.ItemStack[itemCount - 1].Item.Name.Equals(BREAD_ITEM))
+                return true;
+        }
+
+        return false;
+    }
+
+    void LoadNextLevel()
+    {
+        PlayerPrefs.SetInt("currentLevel", currentLevel + 1);
+
+        LevelData newData = levelManager.GetCurrentLevel(currentLevel + 1);
+
+        if(newData != null)
+            UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+    }
+
+    [ContextMenu("Reset Level")]
+    public void ResetLevel()
+    {
+        int undoIndex = moveHistoryManager.moveHistory.Count - 1;
+
+        if (undoIndex < 0)
+            return;
+
+        MoveHistory history = moveHistoryManager.moveHistory[undoIndex];
+        moveHistoryManager.moveHistory.RemoveAt(undoIndex);
+
+        history.CurrentTile.Undo(history.PreviousTile, history.ItemCount, () =>
+        {
+            history.PreviousTile.ItemStack.Reverse();
+
+            ResetLevel();
+        });
+    }
+
+    [ContextMenu("Reset Progress")]
+    void ResetProgress()
+    {
+        PlayerPrefs.SetInt("currentLevel", 0);
     }
 }

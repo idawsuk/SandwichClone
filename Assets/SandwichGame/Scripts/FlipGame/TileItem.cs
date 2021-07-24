@@ -19,10 +19,10 @@ public class TileItem : MonoBehaviour
         
     }
 
-    public void Move(Vector3 target, System.Action onComplete)
+    public void Move(Vector3 target, System.Action onComplete, bool isReverse = false)
     {
         Vector3 diff = transform.position - target;
-        Debug.Log(diff);
+
         Vector3 direction = Vector3.zero;
         if (diff.x > 0)
             direction = Vector3.forward;
@@ -32,6 +32,9 @@ public class TileItem : MonoBehaviour
             direction = Vector3.right;
         else
             direction = Vector3.left;
+
+        if (isReverse)
+            direction = -direction;
 
         Vector3 rotation = transform.localEulerAngles;
         transform.DORotate(rotation + (direction * 180), .5f, RotateMode.FastBeyond360);
