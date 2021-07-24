@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] LevelData TestLevel;
 
     [SerializeField] MoveHistoryManager moveHistoryManager;
+
+    [SerializeField] CameraController cameraController;
     #endregion
 
     const string BREAD_ITEM = "Bread";
@@ -40,6 +42,8 @@ public class GameManager : MonoBehaviour
 
             itemCount = data.LevelItems.Count;
 
+            FocusCamera();
+
             playerInput.OnTouchBegin += StartInput;
             playerInput.OnTouchEnd += EndInput;
         }
@@ -60,6 +64,21 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         Addressables.Release(loadObjectHandler);
+    }
+
+    void FocusCamera()
+    {
+        List<Transform> tiles = new List<Transform>();
+
+        for (int x = 0; x < grid.GetLength(0); x++)
+        {
+            for (int y = 0; y < grid.GetLength(1); y++)
+            {
+                Debug.Log((x * grid.GetLength(0)) + y + " : " + grid[x, y].transform.name, grid[x, y].gameObject);
+                tiles.Add(grid[x, y].transform);
+            }
+        }
+        cameraController.Focus(tiles.ToArray());
     }
 
     void CreateGrid(LevelData levelData)
@@ -141,18 +160,11 @@ public class GameManager : MonoBehaviour
     void MoveItems(Tile targetTile)
     {
         playerInput.enabled = false;
-        List<TileItem> items = selectedTile.ItemStack;
 
-        moveHistoryManager.AddMove(selectedTile, targetTile, items.Count);
-
-        selectedTile.SortItem();
+        moveHistoryManager.AddMove(selectedTile, targetTile, selectedTile.ItemStack.Count);
 
         selectedTile.MoveItem(targetTile, () =>
         {
-            items.Reverse();
-            targetTile.ItemStack.AddRange(items);
-            selectedTile.ItemStack.Clear();
-
             selectedTile = null;
 
             playerInput.enabled = true;

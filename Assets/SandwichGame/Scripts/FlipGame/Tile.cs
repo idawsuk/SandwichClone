@@ -31,7 +31,18 @@ public class Tile : MonoBehaviour
 
     public void MoveItem(Tile target, System.Action onComplete)
     {
-        ItemStack[0].Move(new Vector3(target.transform.position.x, (ItemStack.Count - 1 + target.ItemStack.Count) * target.Offset, target.transform.position.z), onComplete);
+        SortItem();
+
+        ItemStack[0].Move(new Vector3(target.transform.position.x, (ItemStack.Count - 1 + target.ItemStack.Count) * target.Offset, target.transform.position.z), 
+            () =>
+            {
+                ItemStack.Reverse();
+                target.ItemStack.AddRange(ItemStack);
+                ItemStack.Clear();
+
+                onComplete();
+            }
+        );
     }
 
     public void Undo(Tile target, int itemCount, System.Action onComplete)
