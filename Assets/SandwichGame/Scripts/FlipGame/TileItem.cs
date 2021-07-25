@@ -7,10 +7,18 @@ public class TileItem : MonoBehaviour
 {
     public Item Item;
 
+    //finish animation
+    float strength = 10f;
+    int vibrato = 4;
+    float randomness = 10f;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        Vector3 startPosition = transform.position;
+
+        transform.position = new Vector3(startPosition.x, 4, startPosition.z);
+        transform.DOMove(startPosition, 1).SetDelay(Random.Range(0f, .5f)).SetEase(Ease.InOutQuart);
     }
 
     // Update is called once per frame
@@ -44,5 +52,24 @@ public class TileItem : MonoBehaviour
         {
             onComplete?.Invoke();
         });
+    }
+
+    public void MiniJump(int index)
+    {
+        transform.DOJump(this.transform.position, .2f * index, 1, 1f).SetEase(Ease.InOutSine);
+        transform.DOShakeRotation(.8f, strength, vibrato, randomness).SetEase(Ease.OutQuad).SetDelay(.2f);
+    }
+
+    public void Rotate(System.Action onComplete = null)
+    {
+        transform.DORotate(new Vector3(0, 315, 0), 1f, RotateMode.FastBeyond360).SetEase(Ease.InOutSine).OnComplete(() =>
+        {
+            onComplete?.Invoke();
+        });
+    }
+
+    public void PunchScale()
+    {
+        transform.DOPunchScale(Vector3.one * .2f, .3f, 4).SetEase(Ease.OutElastic);
     }
 }

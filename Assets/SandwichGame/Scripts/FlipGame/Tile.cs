@@ -45,6 +45,33 @@ public class Tile : MonoBehaviour
         );
     }
 
+    public void FinishAnimation(System.Action onComplete)
+    {
+        for (int i = 0; i < ItemStack.Count; i++)
+        {
+            if(i == 0)
+            {
+                ItemStack[i].Rotate(onComplete);
+            } else
+            {
+                ItemStack[i].MiniJump(i + 1);
+            }
+        }
+    }
+
+    public void BiteAnimation()
+    {
+        ItemStack[0].PunchScale();
+    }
+
+    public void HideItems()
+    {
+        for (int i = 0; i < ItemStack.Count; i++)
+        {
+            ItemStack[0].gameObject.SetActive(false);
+        }
+    }
+
     public void ResetRotation()
     {
         for (int i = 0; i < ItemStack.Count; i++)
