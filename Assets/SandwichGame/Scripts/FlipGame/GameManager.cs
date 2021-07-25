@@ -16,6 +16,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] MoveHistoryManager moveHistoryManager;
 
     [SerializeField] CameraController cameraController;
+
+    [Header("Boundaries")]
+    [SerializeField] Transform top;
+    [SerializeField] Transform bottom;
+    [SerializeField] Transform left;
+    [SerializeField] Transform right;
     #endregion
 
     const string BREAD_ITEM = "Bread";
@@ -68,17 +74,15 @@ public class GameManager : MonoBehaviour
 
     void FocusCamera()
     {
-        List<Transform> tiles = new List<Transform>();
+        float gridX = grid.GetLength(0) - 1;
+        float gridY = grid.GetLength(1) - 1;
 
-        for (int x = 0; x < grid.GetLength(0); x++)
-        {
-            for (int y = 0; y < grid.GetLength(1); y++)
-            {
-                Debug.Log((x * grid.GetLength(0)) + y + " : " + grid[x, y].transform.name, grid[x, y].gameObject);
-                tiles.Add(grid[x, y].transform);
-            }
-        }
-        cameraController.Focus(tiles.ToArray());
+        top.transform.position = new Vector3(gridX / 2f, 0, gridY + 1);
+        bottom.transform.position = new Vector3(gridX / 2f, 0, -1);
+        left.transform.position = new Vector3(-1, 0, 0);
+        right.transform.position = new Vector3(gridX + 1, 0, 0);
+
+        cameraController.Focus(top, bottom, left, right);
     }
 
     void CreateGrid(LevelData levelData)
