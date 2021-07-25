@@ -2,21 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelManager : MonoBehaviour
+[CreateAssetMenu(fileName = "LevelManager", menuName = "ScriptableObjects/Level Manager", order = 1)]
+public class LevelManager : ScriptableObject
 {
     [SerializeField] List<LevelData> levelData;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public LevelData GetCurrentLevel(int index)
     {
@@ -24,5 +13,10 @@ public class LevelManager : MonoBehaviour
             return null;
 
         return levelData[index];
+    }
+
+    public void AddLevel(LevelData data)
+    {
+        levelData.Add(data);
     }
 }
