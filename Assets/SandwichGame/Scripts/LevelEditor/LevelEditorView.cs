@@ -69,11 +69,6 @@ public class LevelEditorView : MonoBehaviour
 
         for (int i = 0; i < grid.Count; i++)
         {
-            if (i % width == 0)
-            {
-                y = 0;
-                x++;
-            }
 
             if(grid[i].value > 0)
             {
@@ -87,7 +82,12 @@ public class LevelEditorView : MonoBehaviour
                 itemGrid.Add(newItem);
             }
 
-            y++;
+            x++;
+            if ((i + 1) % width == 0)
+            {
+                x = 0;
+                y++;
+            }
         }
         return itemGrid;
     }
