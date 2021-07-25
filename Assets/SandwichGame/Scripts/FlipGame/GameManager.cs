@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     public delegate void Event();
     public Event OnLevelReady;
     public Event OnLevelComplete;
+    public Event OnEatLevelStarted;
+    public Event OnBiteEvent;
     #endregion
 
 
@@ -237,6 +239,8 @@ public class GameManager : MonoBehaviour
 
     void MainGameComplete(Tile finalTile)
     {
+        OnEatLevelStarted?.Invoke();
+
         this.finalTile = finalTile;
 
         MeshRenderer[] objects = this.finalTile.ItemStack[0].GetComponentsInChildren<MeshRenderer>();
@@ -279,6 +283,8 @@ public class GameManager : MonoBehaviour
 
     void Bite()
     {
+        OnBiteEvent?.Invoke();
+
         finalTile.BiteAnimation();
         meshSlicer.transform.position = finalTile.transform.position;
 
