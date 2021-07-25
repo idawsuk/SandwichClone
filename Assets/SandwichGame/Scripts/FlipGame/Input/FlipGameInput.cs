@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PlayerInput : MonoBehaviour
+public class FlipGameInput : BaseInput
 {
     [SerializeField] LayerMask layerMask;
-    [SerializeField] Camera mainCamera;
 
     public delegate void TouchBegin(Tile tile);
     public TouchBegin OnTouchBegin;
@@ -20,48 +19,20 @@ public class PlayerInput : MonoBehaviour
     bool isTileFound = false;
 
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
-        if (!mainCamera)
-            mainCamera = Camera.main;
+        base.Start();
 
         moveThreshold = Screen.width / 10f; // 10% of screen width
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
-        if(Application.isEditor)
-        {
-            if(Input.GetMouseButtonDown(0))
-            {
-                TouchStarted(Input.mousePosition);
-            }
-
-            if(Input.GetMouseButtonUp(0))
-            {
-                TouchEnded(Input.mousePosition);
-            }
-
-            return;
-        }
-
-
-        if(Input.touchCount == 1)
-        {
-            if (Input.GetTouch(0).phase.Equals(TouchPhase.Began))
-            {
-                TouchStarted(Input.GetTouch(0).position);
-            }
-
-            if(Input.GetTouch(0).phase.Equals(TouchPhase.Ended))
-            {
-                TouchEnded(Input.GetTouch(0).position);
-            }
-        }
+        base.Update();
     }
 
-    void TouchStarted(Vector2 position)
+    protected override void TouchStarted(Vector2 position)
     {
         touchStartPosition = position;
 
@@ -86,7 +57,7 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    void TouchEnded(Vector2 position)
+    protected override void TouchEnded(Vector2 position)
     {
         if (!isTileFound)
             return;
