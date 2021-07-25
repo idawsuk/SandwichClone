@@ -45,11 +45,17 @@ public class Tile : MonoBehaviour
         );
     }
 
-    public void FinishAnimation()
+    public void FinishAnimation(System.Action onComplete)
     {
         for (int i = 0; i < ItemStack.Count; i++)
         {
-            ItemStack[i].MiniJump(i + 1);
+            if(i == 0)
+            {
+                ItemStack[i].Rotate(onComplete);
+            } else
+            {
+                ItemStack[i].MiniJump(i + 1);
+            }
         }
     }
 

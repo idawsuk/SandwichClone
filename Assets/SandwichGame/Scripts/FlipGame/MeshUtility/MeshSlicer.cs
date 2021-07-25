@@ -49,6 +49,7 @@ public class MeshSlicer : MonoBehaviour
                     slicedObjects[i] = hull.CreateUpperHull(objectToSlice[i], mat);
                     slicedObjects[i].transform.position = objectToSlice[i].transform.position;
                     slicedObjects[i].transform.SetParent(parent);
+                    slicedObjects[i].transform.localEulerAngles = new Vector3(-90, 45, 45);
 
                     objectToSlice[i].SetActive(false);
 

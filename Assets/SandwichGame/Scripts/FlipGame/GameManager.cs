@@ -224,8 +224,13 @@ public class GameManager : MonoBehaviour
 
             if(IsCompleted(targetTile))
             {
-                targetTile.FinishAnimation();
-                MainGameComplete(targetTile);
+                cameraController.Focus(targetTile.transform, targetTile.ItemStack.Count, .2f);
+                targetTile.SortItem();
+                targetTile.ResetRotation();
+                targetTile.FinishAnimation(() =>
+                {
+                    MainGameComplete(targetTile);
+                });
             }
         });
     }
@@ -233,11 +238,8 @@ public class GameManager : MonoBehaviour
     void MainGameComplete(Tile finalTile)
     {
         this.finalTile = finalTile;
-        this.finalTile.SortItem();
-        this.finalTile.ResetRotation();
-        cameraController.Focus(this.finalTile.transform, this.finalTile.ItemStack.Count, .2f);
 
-        MeshRenderer[] objects = finalTile.ItemStack[0].GetComponentsInChildren<MeshRenderer>();
+        MeshRenderer[] objects = this.finalTile.ItemStack[0].GetComponentsInChildren<MeshRenderer>();
 
         GameObject[] gameObjects = new GameObject[objects.Length];
         for (int i = 0; i < objects.Length; i++)
@@ -245,7 +247,7 @@ public class GameManager : MonoBehaviour
             gameObjects[i] = objects[i].gameObject;
         }
 
-        meshSlicer.SetObjects(gameObjects, finalTile.ItemStack[0].transform);
+        meshSlicer.SetObjects(gameObjects, this.finalTile.ItemStack[0].transform);
 
         ChangeState(GameState.Bite);
     }
@@ -267,8 +269,12 @@ public class GameManager : MonoBehaviour
 
         LevelData newData = levelManager.GetCurrentLevel(currentLevel + 1);
 
-        if(newData != null)
-            UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+        if(newData == null)
+        {
+            ResetProgress(); // restart from the beginning
+        }
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
     }
 
     void Bite()

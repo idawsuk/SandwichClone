@@ -60,6 +60,14 @@ public class TileItem : MonoBehaviour
         transform.DOShakeRotation(.8f, strength, vibrato, randomness).SetEase(Ease.OutQuad).SetDelay(.2f);
     }
 
+    public void Rotate(System.Action onComplete = null)
+    {
+        transform.DORotate(new Vector3(0, 315, 0), 1f, RotateMode.FastBeyond360).SetEase(Ease.InOutSine).OnComplete(() =>
+        {
+            onComplete?.Invoke();
+        });
+    }
+
     public void PunchScale()
     {
         transform.DOPunchScale(Vector3.one * .2f, .3f, 4).SetEase(Ease.OutElastic);
