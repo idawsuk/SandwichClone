@@ -6,6 +6,13 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class GameManager : MonoBehaviour
 {
+    #region public attributes
+    public delegate void Event();
+    public Event OnLevelReady;
+    public Event OnLevelComplete;
+    #endregion
+
+
     #region direct reference
     [Header("Input")]
     [SerializeField] FlipGameInput flipGameInput;
@@ -18,6 +25,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] MoveHistoryManager moveHistoryManager;
     [SerializeField] CameraController cameraController;
     [SerializeField] MeshSlicer meshSlicer;
+    [SerializeField] ParticleManager particleManager;
 
     [Header("Boundaries")]
     [SerializeField] Transform top;
@@ -104,7 +112,7 @@ public class GameManager : MonoBehaviour
                 flipGameInput.enabled = false;
                 munchGameInput.enabled = false;
 
-                LoadNextLevel();
+                OnLevelComplete?.Invoke();
                 break;
             default:
                 break;
@@ -176,6 +184,8 @@ public class GameManager : MonoBehaviour
 
             grid[x, y].ItemStack.Add(tileItem);
         }
+
+        OnLevelReady?.Invoke();
     }
 
     void FlipGameInputStarted(Tile tile)
@@ -210,8 +220,11 @@ public class GameManager : MonoBehaviour
             selectedTile = null;
             flipGameInput.enabled = true;
 
+            ShowParticle(targetTile);
+
             if(IsCompleted(targetTile))
             {
+                targetTile.FinishAnimation();
                 MainGameComplete(targetTile);
             }
         });
@@ -232,7 +245,7 @@ public class GameManager : MonoBehaviour
             gameObjects[i] = objects[i].gameObject;
         }
 
-        meshSlicer.SetObjects(gameObjects);
+        meshSlicer.SetObjects(gameObjects, finalTile.ItemStack[0].transform);
 
         ChangeState(GameState.Bite);
     }
@@ -248,7 +261,7 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
-    void LoadNextLevel()
+    public void LoadNextLevel()
     {
         PlayerPrefs.SetInt("currentLevel", currentLevel + 1);
 
@@ -260,17 +273,28 @@ public class GameManager : MonoBehaviour
 
     void Bite()
     {
-        Debug.Log("BITE " + biteCount);
+        finalTile.BiteAnimation();
         meshSlicer.transform.position = finalTile.transform.position;
 
         meshSlicer.Slice(biteCount);
+        ShowParticle(finalTile);
 
         biteCount++;
 
         if(biteCount >= BITE_REQUIRED)
         {
+            finalTile.HideItems();
+            particleManager.SpawnConfetti(new Vector3(finalTile.transform.position.x, (finalTile.ItemStack.Count + 1) * .2f, finalTile.transform.position.z));
             ChangeState(GameState.Finished);
         }
+    }
+
+    void ShowParticle(Tile targetTile)
+    {
+        ParticleSystem fx = particleManager.Spawn();
+        fx.transform.position = new Vector3(targetTile.transform.position.x, 0.2f * (targetTile.ItemStack.Count - 1), targetTile.transform.position.z);
+        fx.gameObject.SetActive(true);
+        fx.Play();
     }
 
     [ContextMenu("Reset Level")]

@@ -11,6 +11,8 @@ public class MeshSlicer : MonoBehaviour
 
     GameObject[] slicedObjects;
 
+    Transform parent;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,10 +25,12 @@ public class MeshSlicer : MonoBehaviour
         
     }
 
-    public void SetObjects(GameObject[] objects)
+    public void SetObjects(GameObject[] objects, Transform parent)
     {
         objectToSlice = objects;
         slicedObjects = new GameObject[objectToSlice.Length];
+
+        this.parent = parent;
     }
 
     public bool Slice(int index)
@@ -44,6 +48,7 @@ public class MeshSlicer : MonoBehaviour
                     hull.CreateLowerHull(objectToSlice[i], mat).SetActive(false);
                     slicedObjects[i] = hull.CreateUpperHull(objectToSlice[i], mat);
                     slicedObjects[i].transform.position = objectToSlice[i].transform.position;
+                    slicedObjects[i].transform.SetParent(parent);
 
                     objectToSlice[i].SetActive(false);
 
