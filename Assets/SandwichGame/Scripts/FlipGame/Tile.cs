@@ -11,29 +11,29 @@ public class Tile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void SortItem()
     {
-        if(ItemStack.Count >= 2)
-        for (int i = 1; i < ItemStack.Count; i++)
-        {
-            ItemStack[i].transform.SetParent(ItemStack[0].transform);
-        }
+        if (ItemStack.Count >= 2)
+            for (int i = 1; i < ItemStack.Count; i++)
+            {
+                ItemStack[i].transform.SetParent(ItemStack[0].transform);
+            }
     }
 
     public void MoveItem(Tile target, System.Action onComplete)
     {
         SortItem();
 
-        ItemStack[0].Move(new Vector3(target.transform.position.x, (ItemStack.Count - 1 + target.ItemStack.Count) * target.Offset, target.transform.position.z), 
+        ItemStack[0].Move(new Vector3(target.transform.position.x, (ItemStack.Count - 1 + target.ItemStack.Count) * target.Offset, target.transform.position.z),
             () =>
             {
                 ItemStack.Reverse();
@@ -45,9 +45,18 @@ public class Tile : MonoBehaviour
         );
     }
 
+    public void ResetRotation()
+    {
+        for (int i = 0; i < ItemStack.Count; i++)
+        {
+            ItemStack[i].transform.localEulerAngles = Vector3.zero;
+        }
+    }
+
     public void Undo(Tile target, int itemCount, System.Action onComplete)
     {
-        if(itemCount > 1) {
+        if (itemCount > 1)
+        {
             TileItem item = ItemStack[ItemStack.Count - 1];
 
             for (int i = ItemStack.Count - itemCount; i < ItemStack.Count - 1; i++)
@@ -73,7 +82,8 @@ public class Tile : MonoBehaviour
                 onComplete();
             }, true);
 
-        }else if(itemCount == 1)
+        }
+        else if (itemCount == 1)
         {
             TileItem item = ItemStack[ItemStack.Count - 1];
             item.transform.SetParent(null);

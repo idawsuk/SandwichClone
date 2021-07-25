@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CameraController : MonoBehaviour
 {
     [SerializeField] Camera mainCamera;
+    [SerializeField] Vector3 focusOffset;
 
     bool wasAnyPointOutside = false;
     Transform[] targets;
@@ -57,5 +59,16 @@ public class CameraController : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void Focus(Transform target, int itemCount, float offset, System.Action onComplete = null)
+    {
+        Vector3 targetPosition = target.position + focusOffset;
+        targetPosition.y += itemCount * offset;
+
+        mainCamera.transform.DOMove(targetPosition, .5f).SetEase(Ease.OutQuart).OnComplete(() =>
+        {
+            onComplete?.Invoke();
+        });
     }
 }

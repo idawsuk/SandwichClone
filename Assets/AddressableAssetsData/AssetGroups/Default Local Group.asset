@@ -21,42 +21,32 @@ MonoBehaviour:
     m_Address: Bread
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 5910341105362435727, guid: 8406ef125d7886c46a21a4192e11919f,
-      type: 3}
-    m_TargetAsset: {fileID: 5910341105362435727, guid: 8406ef125d7886c46a21a4192e11919f,
-      type: 3}
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: a61dfc89f28e67947a579f8b3a43202f
     m_Address: Lettuce
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 7032800494946985022, guid: a61dfc89f28e67947a579f8b3a43202f,
-      type: 3}
-    m_TargetAsset: {fileID: 7032800494946985022, guid: a61dfc89f28e67947a579f8b3a43202f,
-      type: 3}
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: 08e0ee52241ca24409ff0c3c2cf63357
     m_Address: Egg
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 7460383739415233430, guid: 08e0ee52241ca24409ff0c3c2cf63357,
-      type: 3}
-    m_TargetAsset: {fileID: 7460383739415233430, guid: 08e0ee52241ca24409ff0c3c2cf63357,
-      type: 3}
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: 557b27c497aebdd4385b73cbb28fdad1
     m_Address: Cheese
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 7227414154865067352, guid: 557b27c497aebdd4385b73cbb28fdad1,
-      type: 3}
-    m_TargetAsset: {fileID: 7227414154865067352, guid: 557b27c497aebdd4385b73cbb28fdad1,
-      type: 3}
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: e7ba4e40bbc92354ebb1a73d0db1c5f3
     m_Address: Meat
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 3035185287618108187, guid: e7ba4e40bbc92354ebb1a73d0db1c5f3,
-      type: 3}
-    m_TargetAsset: {fileID: 3035185287618108187, guid: e7ba4e40bbc92354ebb1a73d0db1c5f3,
-      type: 3}
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 19a9465277a067942860eccc56d322ef, type: 2}
   m_SchemaSet:

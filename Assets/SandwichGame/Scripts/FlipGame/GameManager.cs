@@ -7,15 +7,17 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 public class GameManager : MonoBehaviour
 {
     #region direct reference
-    [SerializeField] PlayerInput playerInput;
-    [SerializeField] LevelManager levelManager;
+    [Header("Input")]
+    [SerializeField] FlipGameInput flipGameInput;
+    [SerializeField] BaseInput munchGameInput;
 
+    [Header("Game")]
+    [SerializeField] LevelManager levelManager;
     [SerializeField] Tile tilePrefab;
     [SerializeField] LevelData TestLevel;
-
     [SerializeField] MoveHistoryManager moveHistoryManager;
-
     [SerializeField] CameraController cameraController;
+    [SerializeField] MeshSlicer meshSlicer;
 
     [Header("Boundaries")]
     [SerializeField] Transform top;
@@ -25,6 +27,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     const string BREAD_ITEM = "Bread";
+    const int BITE_REQUIRED = 3;
 
     #region private variables
     AsyncOperationHandle<GameObject> loadObjectHandler;
@@ -32,8 +35,12 @@ public class GameManager : MonoBehaviour
     Tile selectedTile;
 
     int itemCount;
-
+    int biteCount;
     int currentLevel;
+
+    Tile finalTile;
+
+    GameState currentState = GameState.None;
     #endregion
 
     // Start is called before the first frame update
@@ -50,8 +57,12 @@ public class GameManager : MonoBehaviour
 
             FocusCamera();
 
-            playerInput.OnTouchBegin += StartInput;
-            playerInput.OnTouchEnd += EndInput;
+            flipGameInput.OnTouchBegin += FlipGameInputStarted;
+            flipGameInput.OnTouchEnd += FlipGameInputEnded;
+
+            munchGameInput.OnTouchStarted += Bite;
+
+            ChangeState(GameState.Main);
         }
     }
 
@@ -69,7 +80,35 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        Addressables.Release(loadObjectHandler);
+        
+    }
+
+    void ChangeState(GameState state)
+    {
+        if (currentState == state)
+            return;
+
+        currentState = state;
+
+        switch (currentState)
+        {
+            case GameState.Main:
+                flipGameInput.enabled = true;
+                munchGameInput.enabled = false;
+                break;
+            case GameState.Bite:
+                flipGameInput.enabled = false;
+                munchGameInput.enabled = true;
+                break;
+            case GameState.Finished:
+                flipGameInput.enabled = false;
+                munchGameInput.enabled = false;
+
+                LoadNextLevel();
+                break;
+            default:
+                break;
+        }
     }
 
     void FocusCamera()
@@ -139,12 +178,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void StartInput(Tile tile)
+    void FlipGameInputStarted(Tile tile)
     {
         selectedTile = tile;
     }
 
-    void EndInput(Vector2 direction)
+    void FlipGameInputEnded(Vector2 direction)
     {
         if (selectedTile.ItemStack.Count == 0)
             return;
@@ -163,21 +202,39 @@ public class GameManager : MonoBehaviour
 
     void MoveItems(Tile targetTile)
     {
-        playerInput.enabled = false;
-
+        flipGameInput.enabled = false;
         moveHistoryManager.AddMove(selectedTile, targetTile, selectedTile.ItemStack.Count);
 
         selectedTile.MoveItem(targetTile, () =>
         {
             selectedTile = null;
-
-            playerInput.enabled = true;
+            flipGameInput.enabled = true;
 
             if(IsCompleted(targetTile))
             {
-                LoadNextLevel();
+                MainGameComplete(targetTile);
             }
         });
+    }
+
+    void MainGameComplete(Tile finalTile)
+    {
+        this.finalTile = finalTile;
+        this.finalTile.SortItem();
+        this.finalTile.ResetRotation();
+        cameraController.Focus(this.finalTile.transform, this.finalTile.ItemStack.Count, .2f);
+
+        MeshRenderer[] objects = finalTile.ItemStack[0].GetComponentsInChildren<MeshRenderer>();
+
+        GameObject[] gameObjects = new GameObject[objects.Length];
+        for (int i = 0; i < objects.Length; i++)
+        {
+            gameObjects[i] = objects[i].gameObject;
+        }
+
+        meshSlicer.SetObjects(gameObjects);
+
+        ChangeState(GameState.Bite);
     }
 
     bool IsCompleted(Tile tile)
@@ -201,6 +258,21 @@ public class GameManager : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
     }
 
+    void Bite()
+    {
+        Debug.Log("BITE " + biteCount);
+        meshSlicer.transform.position = finalTile.transform.position;
+
+        meshSlicer.Slice(biteCount);
+
+        biteCount++;
+
+        if(biteCount >= BITE_REQUIRED)
+        {
+            ChangeState(GameState.Finished);
+        }
+    }
+
     [ContextMenu("Reset Level")]
     public void ResetLevel()
     {
@@ -222,5 +294,10 @@ public class GameManager : MonoBehaviour
     void ResetProgress()
     {
         PlayerPrefs.SetInt("currentLevel", 0);
+    }
+
+    enum GameState
+    {
+        None, Main, Bite, Finished
     }
 }
